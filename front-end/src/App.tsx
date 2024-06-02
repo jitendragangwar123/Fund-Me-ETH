@@ -1,5 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import {
+  AuthenticationStatus,
   ConnectButton,
   createAuthenticationAdapter,
   getDefaultConfig,
@@ -16,7 +17,7 @@ import {
   base,
 } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SiweMessage } from "siwe";
 
 const config = getDefaultConfig({
@@ -26,12 +27,34 @@ const config = getDefaultConfig({
 });
 
 const queryClient = new QueryClient();
+
 function App() {
+  const [authStatus, setAuthStatus] = useState<AuthenticationStatus>("loading");
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/address");
+        const { address } = await response.json();
+        setAuthStatus(address ? "authenticated" : "unauthenticated");
+      } catch (error) {
+        console.log("error: ", error);
+        setAuthStatus("unauthenticated");
+      }
+    };
+    fetchUser();
+
+    window.addEventListener("focus", fetchUser);
+    return () => {
+      window.removeEventListener("focus", fetchUser);
+    };
+  }, []);
+
   const authAdapter = useMemo(() => {
     return createAuthenticationAdapter({
       getNonce: async () => {
-        const response = await fetch("/api/nonce");
-        return await response.text();
+        const response = await fetch("http://localhost:8000/nonce");
+        const { nonce } = await response.json();
+        return nonce;
       },
 
       createMessage: ({ nonce, address, chainId }) => {
@@ -51,7 +74,7 @@ function App() {
       },
 
       verify: async ({ message, signature }) => {
-        const verifyRes = await fetch("/api/verify", {
+        const verifyRes = await fetch("http://localhost:8000/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message, signature }),
@@ -61,7 +84,7 @@ function App() {
       },
 
       signOut: async () => {
-        await fetch("/api/logout");
+        await fetch("http://localhost:8000/logout");
       },
     });
   }, []);
@@ -71,7 +94,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <RainbowKitAuthenticationProvider
           adapter={authAdapter}
-          status="unauthenticated"
+          status={authStatus}
         >
           <RainbowKitProvider>
             <ConnectButton />
