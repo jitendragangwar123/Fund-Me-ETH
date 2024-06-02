@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "@rainbow-me/rainbowkit/styles.css";
+import {
+  ConnectButton,
+  createAuthenticationAdapter,
+  getDefaultConfig,
+  RainbowKitAuthenticationProvider,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
+import { WagmiProvider } from "wagmi";
+import {
+  sepolia,
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  base,
+} from "wagmi/chains";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { SiweMessage } from "siwe";
 
+const config = getDefaultConfig({
+  appName: "My RainbowKit App",
+  projectId: "YOUR_PROJECT_ID",
+  chains: [sepolia, mainnet, polygon, optimism, arbitrum, base],
+});
+
+const queryClient = new QueryClient();
 function App() {
-  const [count, setCount] = useState(0)
+  const authAdapter = useMemo(() => {
+    return createAuthenticationAdapter({
+      getNonce: async () => {
+        const response = await fetch("/api/nonce");
+        return await response.text();
+      },
+
+      createMessage: ({ nonce, address, chainId }) => {
+        return new SiweMessage({
+          domain: window.location.host,
+          address,
+          statement: "Sign in with Ethereum to the app.",
+          uri: window.location.origin,
+          version: "1",
+          chainId,
+          nonce,
+        });
+      },
+
+      getMessageBody: ({ message }) => {
+        return message.prepareMessage();
+      },
+
+      verify: async ({ message, signature }) => {
+        const verifyRes = await fetch("/api/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, signature }),
+        });
+
+        return Boolean(verifyRes.ok);
+      },
+
+      signOut: async () => {
+        await fetch("/api/logout");
+      },
+    });
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitAuthenticationProvider
+          adapter={authAdapter}
+          status="unauthenticated"
+        >
+          <RainbowKitProvider>
+            <ConnectButton />
+          </RainbowKitProvider>
+        </RainbowKitAuthenticationProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
 }
 
-export default App
+export default App;
