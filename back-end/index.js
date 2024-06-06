@@ -5,7 +5,9 @@ import { SiweMessage, generateNonce } from "siwe";
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin:["https://fund-me-eth.vercel.app"],
+    methods:["POST","GET"],
+    credentials:true
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -51,6 +53,6 @@ app.get("/logout", async (req, res) => {
 });
 
 app.listen(8000, () => {
-    console.log("Servfer is running on port 8000");
+    console.log("Server is running on port 8000");
 })
 

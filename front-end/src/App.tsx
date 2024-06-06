@@ -104,5 +104,4 @@ function App() {
     </WagmiProvider>
   );
 }
-
 export default App;
