@@ -33,7 +33,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch("http://localhost:8000/address");
+        const response = await fetch("https://fund-me-eth-backend.vercel.app/address");
         const { address } = await response.json();
         setAuthStatus(address ? "authenticated" : "unauthenticated");
       } catch (error) {
@@ -52,7 +52,7 @@ function App() {
   const authAdapter = useMemo(() => {
     return createAuthenticationAdapter({
       getNonce: async () => {
-        const response = await fetch("http://localhost:8000/nonce");
+        const response = await fetch("https://fund-me-eth-backend.vercel.app/nonce");
         const { nonce } = await response.json();
         return nonce;
       },
@@ -74,7 +74,7 @@ function App() {
       },
 
       verify: async ({ message, signature }) => {
-        const verifyRes = await fetch("http://localhost:8000/verify", {
+        const verifyRes = await fetch("https://fund-me-eth-backend.vercel.app/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message, signature }),
@@ -84,7 +84,7 @@ function App() {
       },
 
       signOut: async () => {
-        await fetch("http://localhost:8000/logout");
+        await fetch("https://fund-me-eth-backend.vercel.app/logout");
       },
     });
   }, []);
