@@ -3,7 +3,6 @@ import "./App.css";
 
 import {
   AuthenticationStatus,
-  ConnectButton,
   createAuthenticationAdapter,
   getDefaultConfig,
   RainbowKitAuthenticationProvider,
@@ -100,7 +99,6 @@ function App() {
           status={authStatus}
         >
           <RainbowKitProvider>
-            <ConnectButton />
             <FundMe/>
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>
