@@ -1,4 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
+import "./App.css";
+
 import {
   AuthenticationStatus,
   ConnectButton,
@@ -19,6 +21,7 @@ import {
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { SiweMessage } from "siwe";
+import FundMe from "./FundMe";
 
 const config = getDefaultConfig({
   appName: "My RainbowKit App",
@@ -98,6 +101,7 @@ function App() {
         >
           <RainbowKitProvider>
             <ConnectButton />
+            <FundMe/>
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>
       </QueryClientProvider>
