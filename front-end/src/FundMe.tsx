@@ -9,6 +9,11 @@ const FundMe = () => {
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
+  const contract = new ethers.Contract(
+    CONTRACT_ADDRESS,
+    CONTRACT_ABI,
+    signer
+  );
 
   const listenForTransactionMine = (
     transactionResponse: ethers.providers.TransactionResponse,
@@ -30,15 +35,22 @@ const FundMe = () => {
 
   const fund = async () => {
     setMessage("Waiting for transaction confirmation...");
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
     try {
       const transactionResponse = await contract.fund({
         value: ethers.utils.parseEther(ethAmount),
       });
+      await listenForTransactionMine(transactionResponse, provider);
+      setMessage("Transaction completed!");
+    } catch (error) {
+      console.error(error);
+      setMessage("An error occurred while processing the transaction.");
+    }
+  };
+
+  const withdraw = async () => {
+    setMessage("Waiting for transaction confirmation...");
+    try {
+      const transactionResponse = await contract.withdrawCheaper();
       await listenForTransactionMine(transactionResponse, provider);
       setMessage("Transaction completed!");
     } catch (error) {
@@ -69,7 +81,7 @@ const FundMe = () => {
             Fund
           </button>
 
-          <button className="button" onClick={fund}>
+          <button className="button" onClick={withdraw}>
             Withdraw
           </button>
         </div>
