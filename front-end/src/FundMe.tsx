@@ -12,7 +12,7 @@ const FundMe = () => {
 
   const listenForTransactionMine = (transactionResponse: ethers.providers.TransactionResponse, provider: ethers.providers.Web3Provider) => {
     console.log(`Mining ${transactionResponse.hash}`);
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       provider.once(transactionResponse.hash, (transactionReceipt: ethers.providers.TransactionReceipt) => {
         console.log(`Completed with ${transactionReceipt.confirmations} confirmations.`);
         resolve();
