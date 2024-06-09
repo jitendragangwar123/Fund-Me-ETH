@@ -102,7 +102,7 @@ function App() {
           <RainbowKitProvider
           modalSize="compact"
           theme={darkTheme({
-            accentColor: "#743FCA",
+            accentColor: "#319795",
             accentColorForeground: "#FFFFFF",
             borderRadius: "medium",
             fontStack: "system",
