@@ -4,6 +4,7 @@ import "./App.css";
 import {
   AuthenticationStatus,
   createAuthenticationAdapter,
+  darkTheme,
   getDefaultConfig,
   RainbowKitAuthenticationProvider,
   RainbowKitProvider,
@@ -98,7 +99,16 @@ function App() {
           adapter={authAdapter}
           status={authStatus}
         >
-          <RainbowKitProvider>
+          <RainbowKitProvider
+          modalSize="compact"
+          theme={darkTheme({
+            accentColor: "#743FCA",
+            accentColorForeground: "#FFFFFF",
+            borderRadius: "medium",
+            fontStack: "system",
+            overlayBlur: "small",
+          })}
+          >
             <FundMe/>
           </RainbowKitProvider>
         </RainbowKitAuthenticationProvider>

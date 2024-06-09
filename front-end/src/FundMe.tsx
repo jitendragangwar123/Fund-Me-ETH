@@ -9,11 +9,7 @@ const FundMe = () => {
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
-  const contract = new ethers.Contract(
-    CONTRACT_ADDRESS,
-    CONTRACT_ABI,
-    signer
-  );
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
   const listenForTransactionMine = (
     transactionResponse: ethers.providers.TransactionResponse,
@@ -66,7 +62,7 @@ const FundMe = () => {
   return (
     <div className="app">
       <div className="connectButton">
-        <ConnectButton/>
+        <ConnectButton showBalance={true} chainStatus="none"></ConnectButton>
       </div>
       <div className="container">
         <h1 className="title">Fund Me ETH</h1>
