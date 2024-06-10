@@ -62,7 +62,7 @@ const FundMe = () => {
   return (
     <div className="app">
       <div className="connectButton">
-        <ConnectButton showBalance={true} chainStatus="none"></ConnectButton>
+        <ConnectButton showBalance={false} chainStatus="none"></ConnectButton>
       </div>
       <div className="container">
         <h1 className="title">Fund Me ETH</h1>
