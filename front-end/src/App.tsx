@@ -103,7 +103,7 @@ function App() {
           modalSize="compact"
           theme={darkTheme({
             accentColor: "#319795",
-            accentColorForeground: "#FFFFFF",
+            accentColorForeground: "#319795",
             borderRadius: "medium",
             fontStack: "system",
             overlayBlur: "small",
